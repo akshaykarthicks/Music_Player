@@ -2,6 +2,12 @@
 
 A simple and modern music player web application built with Django. This player allows users to browse through songs, play audio, view lyrics, and navigate between tracks.
 
+## Dark Mode 
+![image](https://github.com/user-attachments/assets/06cfe850-84ee-4079-a988-8acfe785de8a)
+
+## Light Mode 
+![image](https://github.com/user-attachments/assets/eb0f50cf-aec5-461d-8ada-0bf935549d21)
+
 ## Features
 
 *   **Responsive UI:** A clean and intuitive user interface designed for a seamless experience.
@@ -143,6 +149,3 @@ Contributions are welcome! Please follow these steps:
 5.  Push to the branch (`git push origin feature/your-feature-name`).
 6.  Open a Pull Request.
 
-## License
-
-This project is open source and available under the [MIT License](LICENSE). 

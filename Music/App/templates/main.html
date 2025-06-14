@@ -1,0 +1,352 @@
+{% load static %}
+<html>
+   <head>
+    <meta charset="utf-8"/>
+    <title>
+      music player
+    </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <style>
+      :root {
+        --primary-bg: #181818;
+        --secondary-bg: #232323;
+        --primary-text: #fff;
+        --secondary-text: #b3b3b3;
+        --accent: #00ffb0;
+        --card-bg: #222;
+        --border-radius: 18px;
+        --shadow: 0 4px 24px rgba(0,0,0,0.2);
+      }
+      body {
+        background: var(--primary-bg);
+        color: var(--primary-text);
+        font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
+      }
+      .music-player {
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        margin: 40px auto;
+        max-width: 480px;
+        padding: 32px 24px 24px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .cover img {
+        width: 180px;
+        height: 180px;
+        border-radius: 16px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+        margin-bottom: 24px;
+      }
+      .titre h3 {
+        color: var(--secondary-text);
+        font-size: 1.1rem;
+        margin: 0 0 4px 0;
+        font-weight: 400;
+      }
+      .titre h1 {
+        color: var(--primary-text);
+        font-size: 2rem;
+        margin: 0 0 16px 0;
+        font-weight: 700;
+      }
+      .lecteur {
+        width: 100%;
+        margin: 18px 0 0 0;
+      }
+      .right-section {
+        margin-top: 32px;
+        display: flex;
+        justify-content: center;
+      }
+      .lyrics-container {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 18px 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+        max-width: 420px;
+      }
+      .lyrics {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .song-lyrics {
+        color: var(--secondary-text);
+        font-size: 1.1rem;
+        white-space: pre-line;
+        text-align: center;
+      }
+      .theme-toggle {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        background: var(--secondary-bg);
+        color: var(--primary-text);
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        cursor: pointer;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s, color 0.3s;
+        z-index: 1000;
+      }
+      body.light-theme {
+        --primary-bg: #f7f7f7;
+        --secondary-bg: #fff;
+        --primary-text: #181818;
+        --secondary-text: #444;
+        --card-bg: #fff;
+      }
+      body.light-theme .theme-toggle {
+        background: var(--primary-bg);
+        color: var(--primary-text);
+      }
+      .player-controls {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        width: 100%;
+        margin-top: 12px;
+      }
+      .player-btn {
+        background: var(--secondary-bg);
+        border: none;
+        color: var(--primary-text);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .player-btn:hover {
+        background: var(--accent);
+        color: #181818;
+      }
+      #progress-bar {
+        flex: 1;
+        accent-color: var(--accent);
+        height: 4px;
+        border-radius: 2px;
+        background: var(--secondary-bg);
+      }
+      #current-time, #duration {
+        font-size: 0.95rem;
+        color: var(--secondary-text);
+        min-width: 40px;
+        text-align: center;
+      }
+    </style>
+   </head>
+   <body>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle theme"><i class="fa fa-moon-o" id="theme-icon"></i></button>
+    <script>
+      const currentPageNumber = parseInt("{{ current_page_number }}");
+      const numPages = parseInt("{{ num_pages }}");
+
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+
+      prevBtn.addEventListener('click', function() {
+        if (currentPageNumber > 1) {
+          window.location.href = `?page=${currentPageNumber - 1}`;
+        }
+      });
+
+      nextBtn.addEventListener('click', function() {
+        if (currentPageNumber < numPages) {
+          window.location.href = `?page=${currentPageNumber + 1}`;
+        }
+      });
+    </script>
+    <script src="{% static 'script.js' %}"></script>
+    <div class="split-layout">
+      {% with item=page_obj.0 %}
+      <main class="lyrics-main lyrics-main-centered">
+        <div class="lyrics-container-centered">
+          <div class="lyrics">
+            <p id="song-lyrics" class="song-lyrics">{{ item.lyrics}}</p>
+            {% if item.lyrics %}
+              <p id="song-lyrics" class="song-lyrics">{{item.lyrics}}</p>
+            {% else %}
+              <!-- <p class="no-lyrics">No lyrics found.</p> -->
+            {% endif %}
+          </div>
+        </div>
+      </main>
+      <footer class="footer-player">
+        <div class="footer-player-inner">
+          <div class="cover cover-footer">
+        <img alt="" src="{{item.image.url}}"/>
+       </div>
+          <div class="footer-info">
+            <div class="titre titre-footer">
+              <h3>{{item.artist}}</h3>
+              <h1>{{item.title}}</h1>
+       </div>
+       <div class="lecteur">
+              <audio class="fc-media" style="display:none;" id="fc-media">
+                <source src="{% if item.audio_file %}{{item.audio_file.url}}{% else %}{{item.audio_link}}{% endif %}" type="audio/mp3"/>
+        </audio>
+              <div class="player-controls">
+                <button id="prev-btn" class="player-btn">
+                  <a href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% endif %}">
+                  
+                <i style="color: white;" class="fa fa-backward"></i></button>
+                <button id="play-pause" class="player-btn"><i class="fa fa-play"></i></button>
+                <button id="next-btn" class="player-btn">
+                  <a   href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% endif %}">
+                  
+                    <i  style="color: white;" class="fa fa-forward"></i></button> </a>
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-bar" value="0" min="0" max="100" step="0.1">
+                <span id="duration">0:00</span>
+              </div>
+       </div>
+      </div>     
+        </div>
+      </footer>
+      {% endwith %}
+    </div>
+    <style>
+      .split-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background: var(--primary-bg);
+      }
+      .lyrics-main-centered {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 48px 0 120px 0; /* leave space for footer */
+      }
+      .footer-player {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100vw;
+        background: var(--card-bg);
+        box-shadow: 0 -2px 16px rgba(0,0,0,0.18);
+        z-index: 1001;
+        padding: 0;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+      }
+      .footer-player-inner {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 16px 32px;
+      }
+      .cover-footer img {
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      }
+      .footer-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .titre-footer h3 {
+        color: var(--secondary-text);
+        font-size: 1rem;
+        margin: 0 0 2px 0;
+        font-weight: 400;
+      }
+      .titre-footer h1 {
+        color: var(--primary-text);
+        font-size: 1.2rem;
+        margin: 0 0 4px 0;
+        font-weight: 700;
+      }
+      .player-controls {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        width: 100%;
+        margin-top: 0;
+      }
+      .player-btn {
+        background: var(--secondary-bg);
+        border: none;
+        color: var(--primary-text);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .player-btn:hover {
+        background: var(--accent);
+        color: #181818;
+      }
+      #progress-bar {
+        flex: 1;
+        accent-color: var(--accent);
+        height: 4px;
+        border-radius: 2px;
+        background: var(--secondary-bg);
+      }
+      #current-time, #duration {
+        font-size: 0.95rem;
+        color: var(--secondary-text);
+        min-width: 40px;
+        text-align: center;
+      }
+      @media (max-width: 900px) {
+        .footer-player-inner {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 12px;
+          padding: 12px 8vw;
+        }
+        .cover-footer img {
+          margin: 0 auto;
+        }
+      }
+      @media (max-width: 600px) {
+        .footer-player-inner {
+          padding: 8px 2vw;
+        }
+        .lyrics-container-centered {
+          padding: 16px 2vw;
+        }
+      }
+      .lyrics-container-centered {
+        background: var(--secondary-bg);
+        border-radius: var(--border-radius);
+        padding: 32px 48px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+        max-width: 1000px;
+        min-width: 400px;
+        width: 100%;
+        margin: 0 auto;
+      }
+    </style>
+   </body>
+   
+  </html>

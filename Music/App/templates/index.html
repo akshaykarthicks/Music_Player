@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   music player
+  </title>
+  <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.7/mediaelementplayer.min.css" rel="stylesheet"/>
+  <link href="{% static './style.css' %}" rel="stylesheet"/>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+
+ </head>
+ <body>
+
+ 
+  {% include 'main.html' %}
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.7/mediaelement-and-player.min.js">
+  </script>
+ 
+  </script>
+
+  <script>
+   
+  </script>
+  
+ </body>
+ <script src="{% static './script.js' %}"></script>   
+</html>

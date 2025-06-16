@@ -1,4 +1,4 @@
-# Music Player
+# Music Player Django
 
 A simple and modern music player web application built with Django. This player allows users to browse through songs, play audio, view lyrics, and navigate between tracks.
 
